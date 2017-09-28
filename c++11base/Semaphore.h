@@ -1,9 +1,9 @@
-#ifndef __UNITYGAME_SEMAPHORE_H_
-#define __UNITYGAME_SEMAPHORE_H_
+#ifndef __JVBASE_SEMAPHORE_H_
+#define __JVBASE_SEMAPHORE_H_
 #include <mutex>
 #include <atomic>
 
-namespace UnityGame {
+namespace JVBase {
     class Semaphore {
     private:
         std::atomic<bool>         m_Available;
@@ -22,4 +22,4 @@ namespace UnityGame {
         bool Post();
     };
 }
-#endif //__UNITYGAME_SEMAPHORE_H_
+#endif //__JVBASE_SEMAPHORE_H_

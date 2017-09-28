@@ -1,5 +1,5 @@
-#ifndef __UNITYGAME_THREADPOOL_H_
-#define __UNITYGAME_THREADPOOL_H_
+#ifndef __JVBASE_THREADPOOL_H_
+#define __JVBASE_THREADPOOL_H_
 
 #include <mutex>
 #include <thread>
@@ -11,7 +11,7 @@
 
 #include "Semaphore.h"
 
-namespace UnityGame {
+namespace JVBase {
 
     class ThreadPool {
         typedef std::shared_ptr<std::thread> thread_ptr;
@@ -36,4 +36,4 @@ namespace UnityGame {
     };
 }
 
-#endif // __UNITYGAME_THREADPOOL_H_
+#endif // __JVBASE_THREADPOOL_H_

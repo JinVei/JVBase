@@ -1,10 +1,10 @@
-#ifndef __UNITYGAME_IOSERVICE_H_
-#define __UNITYGAME_IOSERVICE_H_
+#ifndef __JV_IOSERVICE_H_
+#define __JV_IOSERVICE_H_
 
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 
-namespace UnityGame {
+namespace JVBase {
     typedef std::shared_ptr<boost::asio::ip::tcp::socket>        SOCKET_SPTR;
     typedef std::weak_ptr<boost::asio::ip::tcp::socket>          SOCKET_WPTR;
     typedef std::shared_ptr<std::string>                         STRING_SPTR;

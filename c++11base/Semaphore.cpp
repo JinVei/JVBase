@@ -1,13 +1,13 @@
 
 #include "Semaphore.h"
 
-UnityGame::Semaphore::Semaphore()
+JVBase::Semaphore::Semaphore()
 {
     m_Available = true;
     m_AvailableResource = 0;
 }
 
-UnityGame::Semaphore::Semaphore(long ResourceNumber)
+JVBase::Semaphore::Semaphore(long ResourceNumber)
 {
     m_Available = true;
 
@@ -18,17 +18,17 @@ UnityGame::Semaphore::Semaphore(long ResourceNumber)
     }
 }
 
-UnityGame::Semaphore::~Semaphore()
+JVBase::Semaphore::~Semaphore()
 {
     DisableAndAwakeAll();
 }
 
-static bool UnityGame::CheckCondition(UnityGame::Semaphore* sem)
+static bool JVBase::CheckCondition(JVBase::Semaphore* sem)
 {
     return sem->m_AvailableResource > 0 || !sem->m_Available;
 }
 
-void UnityGame::Semaphore::WaitResource()
+void JVBase::Semaphore::WaitResource()
 {
     std::unique_lock <std::mutex> lck(m_MutexLock);
 
@@ -38,13 +38,13 @@ void UnityGame::Semaphore::WaitResource()
     lck.unlock();
 }
 
-void UnityGame::Semaphore::DisableAndAwakeAll()
+void JVBase::Semaphore::DisableAndAwakeAll()
 {
     m_Available = false;
     m_ConditionLock.notify_all();
 }
 
-bool UnityGame::Semaphore::Wait()
+bool JVBase::Semaphore::Wait()
 {
     if (!m_Available) {
         return false;
@@ -56,7 +56,7 @@ bool UnityGame::Semaphore::Wait()
     return m_Available ? true : false;
 }
 
-bool  UnityGame::Semaphore::Post()
+bool  JVBase::Semaphore::Post()
 {
     if (!m_Available) {
         return false;

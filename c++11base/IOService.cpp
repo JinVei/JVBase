@@ -9,14 +9,14 @@ using namespace std;
 #define SIGPIPE 13
 #endif
 
-UnityGame::IOService::Connection::Connection(IOService& host, SOCKET_SPTR sock) : m_Host(host)
+JVBase::IOService::Connection::Connection(IOService& host, SOCKET_SPTR sock) : m_Host(host)
 {
     m_ReceiveHandler = nullptr;
     m_ExitHandler = nullptr;
     m_pSocket = sock;
 }
 
-bool UnityGame::IOService::Connection::SetReceiveCallBack(RECEIVE_CALLBACK_T func)
+bool JVBase::IOService::Connection::SetReceiveCallBack(RECEIVE_CALLBACK_T func)
 {
     if (!m_bIsLive)
     {
@@ -27,7 +27,7 @@ bool UnityGame::IOService::Connection::SetReceiveCallBack(RECEIVE_CALLBACK_T fun
     return true;
 }
 
-bool UnityGame::IOService::Connection::SetExitCallBack(EXIT_CALLBACK_T func)
+bool JVBase::IOService::Connection::SetExitCallBack(EXIT_CALLBACK_T func)
 {
     if (!m_bIsLive)
     {
@@ -38,7 +38,7 @@ bool UnityGame::IOService::Connection::SetExitCallBack(EXIT_CALLBACK_T func)
     return true;
 }
 
-void UnityGame::IOService::Connection::ReceiveCallBack(STRING_SPTR data)
+void JVBase::IOService::Connection::ReceiveCallBack(STRING_SPTR data)
 {
     if (m_bIsLive && m_ReceiveHandler)
     {
@@ -46,7 +46,7 @@ void UnityGame::IOService::Connection::ReceiveCallBack(STRING_SPTR data)
     }
 }
 
-void UnityGame::IOService::Connection::ExitCallBack()
+void JVBase::IOService::Connection::ExitCallBack()
 {
     if (m_bIsLive && m_ExitHandler)
     {
@@ -55,7 +55,7 @@ void UnityGame::IOService::Connection::ExitCallBack()
     m_bIsLive = false;
 }
 
-bool UnityGame::IOService::Connection::SendData(const string& data)
+bool JVBase::IOService::Connection::SendData(const string& data)
 {
     if (!m_bIsLive)
     {
@@ -67,12 +67,12 @@ bool UnityGame::IOService::Connection::SendData(const string& data)
     return true;
 }
 
-void UnityGame::IOService::Connection::SendOkCallBack()
+void JVBase::IOService::Connection::SendOkCallBack()
 {
 
 }
 
-bool UnityGame::IOService::Connection::CloseConnection()
+bool JVBase::IOService::Connection::CloseConnection()
 {
     if (!m_bIsLive)
     {
@@ -86,19 +86,19 @@ bool UnityGame::IOService::Connection::CloseConnection()
     return true;
 }
 
-UnityGame::IOService::~IOService()
+JVBase::IOService::~IOService()
 {
 
 }
 
-UnityGame::IOService::IOService(ACCEPT_CALLBACK_T accept_handle) :
+JVBase::IOService::IOService(ACCEPT_CALLBACK_T accept_handle) :
     m_ServiceAcceptor(m_IOService, tcp::endpoint(tcp::v4(), 8880))
 {
     m_AcceptHandler = accept_handle;
     m_bIsRun = false;
     m_nPortNumber = 8880;
 }
-UnityGame::IOService::IOService(ACCEPT_CALLBACK_T accept_handle, int nPortNumber) :
+JVBase::IOService::IOService(ACCEPT_CALLBACK_T accept_handle, int nPortNumber) :
     m_ServiceAcceptor(m_IOService, tcp::endpoint(tcp::v4(), nPortNumber))
 {
     m_AcceptHandler = accept_handle;
@@ -106,7 +106,7 @@ UnityGame::IOService::IOService(ACCEPT_CALLBACK_T accept_handle, int nPortNumber
     m_nPortNumber = nPortNumber;
 }
 
-void UnityGame::IOService::ReadCallBack(CONNECTION_SPTR Connect, const boost::system::error_code& err, size_t bytes_transferred)
+void JVBase::IOService::ReadCallBack(CONNECTION_SPTR Connect, const boost::system::error_code& err, size_t bytes_transferred)
 {
     if (err)
     {
@@ -123,7 +123,7 @@ void UnityGame::IOService::ReadCallBack(CONNECTION_SPTR Connect, const boost::sy
     Connect->m_pSocket->async_read_some(boost::asio::buffer(Connect->m_szReadBuffer, 255), readFuc);
 }
 
-void UnityGame::IOService::WriteCallBack(Connection* Connect, const boost::system::error_code& err, size_t bytes_transferred)
+void JVBase::IOService::WriteCallBack(Connection* Connect, const boost::system::error_code& err, size_t bytes_transferred)
 {
     if (err)
     {
@@ -133,7 +133,7 @@ void UnityGame::IOService::WriteCallBack(Connection* Connect, const boost::syste
     Connect->SendOkCallBack();
 }
 
-void UnityGame::IOService::AcceptCallBack(SOCKET_SPTR psock, const boost::system::error_code& err)
+void JVBase::IOService::AcceptCallBack(SOCKET_SPTR psock, const boost::system::error_code& err)
 {
     if (err)
     {
@@ -151,7 +151,7 @@ void UnityGame::IOService::AcceptCallBack(SOCKET_SPTR psock, const boost::system
     AsyncAccept();
 }
 
-void UnityGame::IOService::AsyncAccept()
+void JVBase::IOService::AsyncAccept()
 {
     SOCKET_SPTR sock = SOCKET_SPTR(new tcp::socket(this->m_IOService));
 
@@ -160,13 +160,13 @@ void UnityGame::IOService::AsyncAccept()
     m_ServiceAcceptor.async_accept(*sock, acceptHandle);
 }
 
-void UnityGame::IOService::StartEventLoop()
+void JVBase::IOService::StartEventLoop()
 {
     AsyncAccept();
     this->m_IOService.run();
 }
 
-bool UnityGame::IOService::StartIOServer()
+bool JVBase::IOService::StartIOServer()
 {
     if (!m_bIsRun)
     {
@@ -177,13 +177,13 @@ bool UnityGame::IOService::StartIOServer()
     return false;
 }
 
-void UnityGame::IOService::StopIOServer()
+void JVBase::IOService::StopIOServer()
 {
     m_bIsRun = false;
     m_IOService.stop();
 }
 
-void UnityGame::IOService::AsyncWrite(Connection* Connect, const string& strData)
+void JVBase::IOService::AsyncWrite(Connection* Connect, const string& strData)
 {
     SOCKET_SPTR sock = Connect->m_pSocket;
 

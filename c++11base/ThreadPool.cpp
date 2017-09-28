@@ -2,28 +2,28 @@
 #include "ThreadPool.h"
 
 using namespace std;
-UnityGame::ThreadPool::ThreadPool()
+JVBase::ThreadPool::ThreadPool()
 {
     m_bRun = true;
     m_nThreadsNum = 1;
     this->InitWorkThreads();
 }
 
-UnityGame::ThreadPool::ThreadPool(unsigned int nThreadNum)
+JVBase::ThreadPool::ThreadPool(unsigned int nThreadNum)
 {
     m_bRun = true;
     m_nThreadsNum = nThreadNum;
     this->InitWorkThreads();
 }
 
-UnityGame::ThreadPool::~ThreadPool()
+JVBase::ThreadPool::~ThreadPool()
 {
     if (m_bRun)
     {
         this->DestroyThreadPool();
     }
 }
-void UnityGame::ThreadPool::DestroyThreadPool()
+void JVBase::ThreadPool::DestroyThreadPool()
 {
     m_bRun = false;
     m_TaskSemaphore.DisableAndAwakeAll();
@@ -34,7 +34,7 @@ void UnityGame::ThreadPool::DestroyThreadPool()
     }
     m_vptrThreads.clear();
 }
-static int UnityGame::WorkThreadFuction(UnityGame::ThreadPool* threadPool)
+static int JVBase::WorkThreadFuction(JVBase::ThreadPool* threadPool)
 {
     int nRetCode;
     while (threadPool->m_bRun)
@@ -62,7 +62,7 @@ Exit1:
     return 0;
 }
 
-int UnityGame::ThreadPool::InitWorkThreads()
+int JVBase::ThreadPool::InitWorkThreads()
 {
     thread_ptr t;
     for (unsigned int i = 0; i < m_nThreadsNum; ++i)
@@ -75,7 +75,7 @@ int UnityGame::ThreadPool::InitWorkThreads()
     return 0;
 }
 
-void UnityGame::ThreadPool::PushTask(callback_ptr fn)
+void JVBase::ThreadPool::PushTask(callback_ptr fn)
 {
     std::unique_lock<std::mutex> lck(m_TaskQueueMutex);
     m_vTaskQueue.push(fn);
@@ -83,7 +83,7 @@ void UnityGame::ThreadPool::PushTask(callback_ptr fn)
     m_TaskSemaphore.Post();
 }
 
-void UnityGame::ThreadPool::CreateThreadAndPushTask(callback_ptr fn)
+void JVBase::ThreadPool::CreateThreadAndPushTask(callback_ptr fn)
 {
     std::unique_lock<std::mutex> lck(m_TaskQueueMutex);
 
