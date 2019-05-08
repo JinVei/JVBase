@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <atomic>
+#include <list>
 
 #include "Semaphore.h"
 
@@ -20,8 +21,8 @@ namespace JVBase {
         std::atomic<bool>        m_bRun;
         unsigned int             m_nThreadsNum;
         Semaphore                m_TaskSemaphore;
-        std::mutex               m_TaskQueueMutex;
-        std::vector<thread_ptr>  m_vptrThreads;
+        std::atomic_flag         m_TaskQueuesSpinlock;
+        std::list<thread_ptr>  m_vptrThreads;
         std::queue<callback_ptr> m_vTaskQueue;
 
         friend int WorkThreadFuction(ThreadPool* threadPool);

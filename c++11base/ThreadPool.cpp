@@ -27,10 +27,9 @@ void JVBase::ThreadPool::DestroyThreadPool()
 {
     m_bRun = false;
     m_TaskSemaphore.DisableAndAwakeAll();
-    for (unsigned int i = 0; i < m_nThreadsNum; ++i)
+    for (auto& thread : m_vptrThreads)
     {
-        m_vptrThreads[i]->join();
-        m_vptrThreads[i] = nullptr;
+        thread->join();
     }
     m_vptrThreads.clear();
 }
@@ -46,15 +45,16 @@ static int JVBase::WorkThreadFuction(JVBase::ThreadPool* threadPool)
             goto Exit1;
         }
 
-        std::unique_lock<std::mutex> lck(threadPool->m_TaskQueueMutex);
+        while (threadPool->m_TaskQueuesSpinlock.test_and_set());
         if (threadPool->m_vTaskQueue.empty())
         {
-            lck.unlock();
+            threadPool->m_TaskQueuesSpinlock.clear();
             continue;
         }
         auto _callback = threadPool->m_vTaskQueue.front();
         threadPool->m_vTaskQueue.pop();
-        lck.unlock();
+
+        threadPool->m_TaskQueuesSpinlock.clear();
 
         _callback();
     }
@@ -77,22 +77,27 @@ int JVBase::ThreadPool::InitWorkThreads()
 
 void JVBase::ThreadPool::PushTask(callback_ptr fn)
 {
-    std::unique_lock<std::mutex> lck(m_TaskQueueMutex);
+    while (m_TaskQueuesSpinlock.test_and_set());
+
     m_vTaskQueue.push(fn);
-    lck.unlock();
+
+    m_TaskQueuesSpinlock.clear();
+
     m_TaskSemaphore.Post();
 }
 
 void JVBase::ThreadPool::CreateThreadAndPushTask(callback_ptr fn)
 {
-    std::unique_lock<std::mutex> lck(m_TaskQueueMutex);
-
     thread_ptr t = thread_ptr(new std::thread(WorkThreadFuction, this));
+
+    while (m_TaskQueuesSpinlock.test_and_set());
+
     m_vptrThreads.push_back(t);
     m_nThreadsNum++;
 
     m_vTaskQueue.push(fn);
-    lck.unlock();
+
+    m_TaskQueuesSpinlock.clear();
 
     m_TaskSemaphore.Post();
 }
