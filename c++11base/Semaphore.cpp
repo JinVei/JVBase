@@ -51,7 +51,7 @@ bool JVBase::Semaphore::Wait()
     }
 
     WaitResource();
-    m_ConditionLock.notify_one();
+//    m_ConditionLock.notify_one();
 
     return m_Available ? true : false;
 }
