@@ -7,7 +7,7 @@ namespace JVBase {
     class Semaphore {
     private:
         std::atomic<bool>         m_Available;
-        std::atomic<long>         m_AvailableResource;
+        long                      m_AvailableResource;
         std::mutex                m_MutexLock;
         std::condition_variable   m_ConditionLock;
 

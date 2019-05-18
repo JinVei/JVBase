@@ -63,9 +63,9 @@ bool  JVBase::Semaphore::Post()
     }
     else
     {
-        //std::unique_lock <std::mutex> lck(m_MutexLock);
+        std::unique_lock <std::mutex> lck(m_MutexLock);
         ++m_AvailableResource;
-        //lck.unlock();
+        lck.unlock();
         m_ConditionLock.notify_one();
         return true;
     }
